@@ -24,6 +24,8 @@ model Files {
   updatedAt  DateTime        @updatedAt
   deletedAt  DateTime?
   isDeleted  Boolean         @default(false)
+
+  @@map("files")
 }
 
 enum AllowedFileType {
