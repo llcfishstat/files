@@ -41,7 +41,7 @@ export class FilesService implements IFileService {
   }
 
   async createFile(
-    userId: number,
+    userId: string,
     data: CreateFileDto,
   ): Promise<FileResponseDto> {
     const { fileName, fileType, storageKey } = data;

@@ -1,5 +1,5 @@
 export interface IAuthUser {
-  id: number;
+  id: string;
   role: string;
   device_token: string;
 }
