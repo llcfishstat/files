@@ -17,13 +17,15 @@ datasource db {
 model Files {
   id         String          @id @default(auto()) @map("_id") @db.ObjectId
   fileName   String
-  userId     Int
+  userId     String
   storageKey String
   fileType   AllowedFileType
   createdAt  DateTime        @default(now())
   updatedAt  DateTime        @updatedAt
   deletedAt  DateTime?
   isDeleted  Boolean         @default(false)
+
+  @@map("files")
 }
 
 enum AllowedFileType {
