@@ -13,7 +13,7 @@ export class FileResponseDto implements Files {
   isDeleted: boolean;
   storageKey: string;
   updatedAt: Date;
-  userId: number;
+  userId: string;
 
   @Type(() => UserResponseDto)
   @ValidateNested()

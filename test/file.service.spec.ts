@@ -79,7 +79,7 @@ describe('FilesService', () => {
         fileType: AllowedFileType.JPG,
         storageKey: 'some-key',
       } as CreateFileDto;
-      const userId = 1;
+      const userId = 'sdfsdfdsf-sdfdsf-234ffs';
 
       const createdFile = {
         id: '1',
@@ -109,7 +109,7 @@ describe('FilesService', () => {
         fileType: AllowedFileType.JPG,
         storageKey: 'some-key',
       } as CreateFileDto;
-      const userId = 1;
+      const userId = 'sdfsdfdsf-sdfdsf-234ffs';
 
       jest
         .spyOn(prismaService.files, 'create')
@@ -127,7 +127,7 @@ describe('FilesService', () => {
         fileName: 'testFile.txt',
         contentType: 'text/plain',
       };
-      const authUser = { id: 1 } as any;
+      const authUser = { id: 'sdfsdfdsf-sdfdsf-234ffs' } as any;
 
       const presignedUrl = 'http://presigned-url.com';
       (getSignedUrl as jest.Mock).mockResolvedValue(presignedUrl);
@@ -148,7 +148,7 @@ describe('FilesService', () => {
         fileName: 'testFile.txt',
         contentType: 'text/plain',
       };
-      const authUser = { id: 1 } as any;
+      const authUser = { id: 'sdfsdfdsf-sdfdsf-234ffs' } as any;
 
       (getSignedUrl as jest.Mock).mockRejectedValue(
         new Error('Error generating presigned URL'),
@@ -169,7 +169,7 @@ describe('FilesService', () => {
         fileType: 'text/plain',
         storageKey: 'some-key',
         storagePath: 'some/path',
-        userId: 1,
+        userId: 'sdfsdfdsf-sdfdsf-234ffs',
       } as unknown as Files;
 
       const presignedUrl = 'http://presigned-url.com';
@@ -199,7 +199,7 @@ describe('FilesService', () => {
         fileType: 'text/plain',
         storageKey: 'some-key',
         storagePath: 'some/path',
-        userId: 1,
+        userId: 'sdfsdfdsf-sdfdsf-234ffs',
       } as unknown as Files;
 
       (getSignedUrl as jest.Mock).mockRejectedValue(

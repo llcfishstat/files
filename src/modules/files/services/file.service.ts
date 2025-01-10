@@ -31,6 +31,8 @@ export class FilesService implements IFileService {
     this.authClient.connect();
     this.s3Client = new S3Client({
       region: this.configService.get('aws.region'),
+      endpoint: this.configService.get('aws.endpoint'),
+      forcePathStyle: true,
       credentials: {
         accessKeyId: this.configService.get('aws.accessKeyId'),
         secretAccessKey: this.configService.get('aws.secretAccessKey'),
@@ -39,7 +41,7 @@ export class FilesService implements IFileService {
   }
 
   async createFile(
-    userId: number,
+    userId: string,
     data: CreateFileDto,
   ): Promise<FileResponseDto> {
     const { fileName, fileType, storageKey } = data;
@@ -70,7 +72,7 @@ export class FilesService implements IFileService {
         ContentType: contentType,
       });
       const url = await getSignedUrl(this.s3Client, command, {
-        expiresIn: Number(this.configService.get('presignExpire')),
+        expiresIn: Number(this.configService.get('aws.presignExpire')),
       });
       return { url, storageKey };
     } catch (e) {
