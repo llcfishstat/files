@@ -1,8 +1,14 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import {
   S3Client,
   PutObjectCommand,
   GetObjectCommand,
+  DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { ConfigService } from '@nestjs/config';
@@ -46,7 +52,6 @@ export class FilesService implements IFileService {
   ): Promise<FileResponseDto> {
     const { fileName, fileType, storageKey } = data;
 
-    console.log(data, userId);
     const file = await this.prismaService.files.create({
       data: {
         fileName,
@@ -107,5 +112,28 @@ export class FilesService implements IFileService {
     } catch (e) {
       throw e;
     }
+  }
+
+  async deleteFile(userId: string, fileId: string): Promise<void> {
+    const file = await this.prismaService.files.findUnique({
+      where: { id: fileId },
+    });
+    if (!file) {
+      throw new NotFoundException('file.fileNotFound');
+    }
+
+    if (file.userId !== userId) {
+      throw new UnauthorizedException('Not allowed to delete this file');
+    }
+
+    const command = new DeleteObjectCommand({
+      Bucket: this.configService.get('aws.bucket'),
+      Key: file.storageKey,
+    });
+    await this.s3Client.send(command);
+
+    await this.prismaService.files.delete({
+      where: { id: fileId },
+    });
   }
 }
