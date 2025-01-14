@@ -45,6 +45,8 @@ export class FilesService implements IFileService {
     data: CreateFileDto,
   ): Promise<FileResponseDto> {
     const { fileName, fileType, storageKey } = data;
+
+    console.log(data, userId);
     const file = await this.prismaService.files.create({
       data: {
         fileName,
