@@ -38,4 +38,6 @@ enum AllowedFileType {
   PDF
   DOC
   DOCX
+  CSV
+  XLS
 }
