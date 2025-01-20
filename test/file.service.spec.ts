@@ -128,15 +128,11 @@ describe('FilesService', () => {
         fileName: 'testFile.txt',
         contentType: 'text/plain',
       };
-      const authUser = { id: 'sdfsdfdsf-sdfdsf-234ffs' } as any;
 
       const presignedUrl = 'http://presigned-url.com';
       (getSignedUrl as jest.Mock).mockResolvedValue(presignedUrl);
 
-      const result = await service.getPresignPutObject(
-        getPresignPutObjectDto,
-        authUser,
-      );
+      const result = await service.getPresignPutObject(getPresignPutObjectDto);
 
       expect(result).toEqual({
         url: presignedUrl,
@@ -149,14 +145,13 @@ describe('FilesService', () => {
         fileName: 'testFile.txt',
         contentType: 'text/plain',
       };
-      const authUser = { id: 'sdfsdfdsf-sdfdsf-234ffs' } as any;
 
       (getSignedUrl as jest.Mock).mockRejectedValue(
         new Error('Error generating presigned URL'),
       );
 
       await expect(
-        service.getPresignPutObject(getPresignPutObjectDto, authUser),
+        service.getPresignPutObject(getPresignPutObjectDto),
       ).rejects.toThrow('Error generating presigned URL');
     });
   });

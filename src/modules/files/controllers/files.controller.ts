@@ -32,16 +32,14 @@ export class FilesController {
     @AuthUser() user: IAuthUser,
     @Body() data: CreateFileDto,
   ): Promise<FileResponseDto> {
+    console.log(user, data);
     return this.fileService.createFile(user.id, data);
   }
 
   @ApiBearerAuth('accessToken')
   @Get('/presign/put')
-  putPresignUrl(
-    @AuthUser() user: IAuthUser,
-    @Query() params: GetPresignPutObjectDto,
-  ) {
-    return this.fileService.getPresignPutObject(params, user);
+  putPresignUrl(@Query() params: GetPresignPutObjectDto) {
+    return this.fileService.getPresignPutObject(params);
   }
 
   @ApiBearerAuth('accessToken')
