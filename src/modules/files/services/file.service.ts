@@ -17,7 +17,6 @@ import { ClientProxy } from '@nestjs/microservices';
 import { plainToInstance } from 'class-transformer';
 
 import { PrismaService } from '../../../common/services/prisma.service';
-import { IAuthUser } from '../interfaces/file.interface';
 import { IFileService } from '../interfaces/file.service.interface';
 import { GetPresignPutObjectDto } from '../dtos/file.presign.put.dto';
 import { GetPresignPutObjectResponseDto } from '../dtos/file.presign.put.response.dto';
@@ -67,10 +66,9 @@ export class FilesService implements IFileService {
     return { ...file, author: user };
   }
 
-  async getPresignPutObject(
-    { contentType }: GetPresignPutObjectDto,
-    { id: userId }: IAuthUser,
-  ): Promise<GetPresignPutObjectResponseDto> {
+  async getPresignPutObject({
+    contentType,
+  }: GetPresignPutObjectDto): Promise<GetPresignPutObjectResponseDto> {
     try {
       const storageKey = 'company-files';
       const command = new PutObjectCommand({
