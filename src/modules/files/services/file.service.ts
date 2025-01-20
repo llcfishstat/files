@@ -68,11 +68,11 @@ export class FilesService implements IFileService {
   }
 
   async getPresignPutObject(
-    { fileName, contentType }: GetPresignPutObjectDto,
+    { contentType }: GetPresignPutObjectDto,
     { id: userId }: IAuthUser,
   ): Promise<GetPresignPutObjectResponseDto> {
     try {
-      const storageKey = `${userId}/${Date.now()}_${fileName}`;
+      const storageKey = 'company-files';
       const command = new PutObjectCommand({
         Bucket: this.configService.get('aws.bucket'),
         Key: storageKey,
@@ -102,9 +102,10 @@ export class FilesService implements IFileService {
       const command = new GetObjectCommand({
         Bucket: this.configService.get('aws.bucket'),
         Key: file.storageKey,
+        ResponseContentDisposition: 'inline',
       });
       const url = await getSignedUrl(this.s3Client, command, {
-        expiresIn: Number(this.configService.get('presignExpire')),
+        expiresIn: Number(this.configService.get('aws.presignExpire')),
       });
       return {
         url,
