@@ -62,7 +62,9 @@ export class FilesService implements IFileService {
     const userResponse = await firstValueFrom(
       this.authClient.send('getUserById', JSON.stringify({ userId })),
     );
+
     const user = plainToInstance(UserResponseDto, userResponse);
+
     return { ...file, author: user };
   }
 
