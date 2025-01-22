@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthUser } from 'src/decorators/auth.decorator';
 import { AllowedRoles } from 'src/decorators/roles.decorator';
@@ -24,21 +32,29 @@ export class FilesController {
     @AuthUser() user: IAuthUser,
     @Body() data: CreateFileDto,
   ): Promise<FileResponseDto> {
+    console.log(user, data);
     return this.fileService.createFile(user.id, data);
   }
 
   @ApiBearerAuth('accessToken')
   @Get('/presign/put')
-  putPresignUrl(
-    @AuthUser() user: IAuthUser,
-    @Query() params: GetPresignPutObjectDto,
-  ) {
-    return this.fileService.getPresignPutObject(params, user);
+  putPresignUrl(@Query() params: GetPresignPutObjectDto) {
+    return this.fileService.getPresignPutObject(params);
   }
 
   @ApiBearerAuth('accessToken')
   @Get('/presign/get/:id')
   getPresignUrl(@Param('id') fileId: string) {
     return this.fileService.getPresignGetObject(fileId);
+  }
+
+  @ApiBearerAuth('accessToken')
+  @AllowedRoles(['User', 'Admin'])
+  @Delete(':id')
+  async deleteFile(
+    @AuthUser() user: IAuthUser,
+    @Param('id') fileId: string,
+  ): Promise<void> {
+    return this.fileService.deleteFile(user.id, fileId);
   }
 }

@@ -36,4 +36,8 @@ enum AllowedFileType {
   MP3
   WAV
   PDF
+  DOC
+  DOCX
+  CSV
+  XLS
 }

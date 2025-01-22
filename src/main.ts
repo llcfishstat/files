@@ -14,15 +14,22 @@ async function bootstrap() {
   const app = await NestFactory.create(
     AppModule,
     new ExpressAdapter(express()),
-    {
-      cors: true,
-    },
   );
+
   const configService = app.get(ConfigService);
 
   const expressApp = app.getHttpAdapter().getInstance();
 
-  // add root message
+  const corsOrigin = configService.get<string>('app.corsOrigin') || '*';
+  const allowedOrigins = [corsOrigin, 'http://localhost:8888'];
+
+  app.enableCors({
+    origin: allowedOrigins,
+    methods: 'GET,POST,PUT,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type,Authorization',
+    credentials: true,
+  });
+
   expressApp.get('/', (_req: Request, res: Response) => {
     res.status(200).json({
       status: 200,
