@@ -42,6 +42,8 @@ export class FilesController {
     @AuthUser() user: IAuthUser,
     @Query() params: GetPresignPutObjectDto,
   ) {
+
+    console.log(user);
     return this.fileService.getPresignPutObject(params, user);
   }
 
