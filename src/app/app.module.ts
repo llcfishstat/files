@@ -44,7 +44,7 @@ import { AppController } from './app.controller';
             urls: [`${configService.get('rmq.uri')}`],
             queue: `${configService.get('rmq.auth')}`,
             queueOptions: {
-              durable: false,
+              durable: true,
             },
           },
         }),
