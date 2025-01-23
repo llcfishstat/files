@@ -60,6 +60,8 @@ export class FilesService implements IFileService {
         userId,
       },
     });
+    console.log('Bucket:', this.configService.get('aws.bucket'));
+    console.log('Bucket:', this.configService.get('aws.presignExpire'));
     try {
       const userResponse = await firstValueFrom(
         this.authClient
