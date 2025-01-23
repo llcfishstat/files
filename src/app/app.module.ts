@@ -21,6 +21,7 @@ import { AppController } from './app.controller';
     CommonModule,
     TerminusModule,
     FilesModule,
+
     I18nModule.forRoot({
       fallbackLanguage: 'en',
       loaderOptions: {

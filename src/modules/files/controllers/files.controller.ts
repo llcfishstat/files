@@ -32,7 +32,6 @@ export class FilesController {
     @AuthUser() user: IAuthUser,
     @Body() data: CreateFileDto,
   ): Promise<FileResponseDto> {
-    console.log(user, data);
     return this.fileService.createFile(user.id, data);
   }
 
@@ -42,8 +41,6 @@ export class FilesController {
     @AuthUser() user: IAuthUser,
     @Query() params: GetPresignPutObjectDto,
   ) {
-
-    console.log(user);
     return this.fileService.getPresignPutObject(params, user);
   }
 
