@@ -34,7 +34,9 @@ export class FilesService implements IFileService {
     private readonly configService: ConfigService,
     private readonly prismaService: PrismaService,
   ) {
-    this.authClient.connect();
+    this.authClient.connect().catch((error) => {
+      console.error('Error connecting to authClient:', error);
+    });
     this.s3Client = new S3Client({
       region: this.configService.get('aws.region'),
       endpoint: this.configService.get('aws.endpoint'),
