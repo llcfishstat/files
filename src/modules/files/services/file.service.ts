@@ -12,7 +12,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { ConfigService } from '@nestjs/config';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, retry, timeout } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 import { plainToInstance } from 'class-transformer';
 
@@ -59,13 +59,21 @@ export class FilesService implements IFileService {
         userId,
       },
     });
-    const userResponse = await firstValueFrom(
-      this.authClient.send('getUserById', JSON.stringify({ userId })),
-    );
+    try {
+      const userResponse = await firstValueFrom(
+        this.authClient
+          .send('getUserById', JSON.stringify({ userId }))
+          .pipe(timeout(5000), retry(3)),
+      );
 
-    const user = plainToInstance(UserResponseDto, userResponse);
+      const user = plainToInstance(UserResponseDto, userResponse);
 
-    return { ...file, author: user };
+      return { ...file, author: user };
+    } catch (error) {
+      throw new Error(
+        `Failed to retrieve user with ID ${userId}: ${error.message}`,
+      );
+    }
   }
 
   async getPresignPutObject({
