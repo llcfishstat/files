@@ -18,7 +18,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
   async catch(exception: unknown, host: ArgumentsHost) {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
-    console.log(response);
     console.log(exception);
 
     const statusCode =
