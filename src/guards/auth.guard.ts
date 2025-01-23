@@ -26,6 +26,7 @@ export class AuthGuard {
     if (isPublic || isRpc) {
       return true;
     }
+    console.log(request.headers);
     let token = request.headers['authorization'];
     if (!token) {
       throw new UnauthorizedException('auth.accessTokenUnauthorized');
