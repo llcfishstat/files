@@ -12,7 +12,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { ConfigService } from '@nestjs/config';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, retry, timeout } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 import { plainToInstance } from 'class-transformer';
 
@@ -24,6 +24,7 @@ import { GetPresignGetObjectResponseDto } from '../dtos/file.presign.get.respons
 import { CreateFileDto } from '../dtos/file.create.dto';
 import { FileResponseDto } from '../dtos/file.response.dto';
 import { UserResponseDto } from '../dtos/user.response.dto';
+import { IAuthUser } from '../interfaces/file.interface';
 
 @Injectable()
 export class FilesService implements IFileService {
@@ -59,20 +60,27 @@ export class FilesService implements IFileService {
         userId,
       },
     });
-    const userResponse = await firstValueFrom(
-      this.authClient.send('getUserById', JSON.stringify({ userId })),
-    );
-
-    const user = plainToInstance(UserResponseDto, userResponse);
-
-    return { ...file, author: user };
+    try {
+      const userResponse = await firstValueFrom(
+        this.authClient
+          .send('getUserById', JSON.stringify({ userId }))
+          .pipe(timeout(5000), retry(3)),
+      );
+      const user = plainToInstance(UserResponseDto, userResponse);
+      return { ...file, author: user };
+    } catch (error) {
+      throw new Error(
+        `Failed to retrieve user with ID ${userId}: ${error.message}`,
+      );
+    }
   }
 
-  async getPresignPutObject({
-    contentType,
-  }: GetPresignPutObjectDto): Promise<GetPresignPutObjectResponseDto> {
+  async getPresignPutObject(
+    { fileName, contentType }: GetPresignPutObjectDto,
+    { id: userId }: IAuthUser,
+  ): Promise<GetPresignPutObjectResponseDto> {
     try {
-      const storageKey = 'company-files';
+      const storageKey = `${userId}/${Date.now()}_${fileName}`;
       const command = new PutObjectCommand({
         Bucket: this.configService.get('aws.bucket'),
         Key: storageKey,

@@ -38,8 +38,11 @@ export class FilesController {
 
   @ApiBearerAuth('accessToken')
   @Get('/presign/put')
-  putPresignUrl(@Query() params: GetPresignPutObjectDto) {
-    return this.fileService.getPresignPutObject(params);
+  putPresignUrl(
+    @AuthUser() user: IAuthUser,
+    @Query() params: GetPresignPutObjectDto,
+  ) {
+    return this.fileService.getPresignPutObject(params, user);
   }
 
   @ApiBearerAuth('accessToken')
