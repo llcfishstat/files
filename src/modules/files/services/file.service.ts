@@ -24,6 +24,7 @@ import { GetPresignGetObjectResponseDto } from '../dtos/file.presign.get.respons
 import { CreateFileDto } from '../dtos/file.create.dto';
 import { FileResponseDto } from '../dtos/file.response.dto';
 import { UserResponseDto } from '../dtos/user.response.dto';
+import { IAuthUser } from '../interfaces/file.interface';
 
 @Injectable()
 export class FilesService implements IFileService {
@@ -74,11 +75,12 @@ export class FilesService implements IFileService {
     }
   }
 
-  async getPresignPutObject({
-    contentType,
-  }: GetPresignPutObjectDto): Promise<GetPresignPutObjectResponseDto> {
+  async getPresignPutObject(
+    { fileName, contentType }: GetPresignPutObjectDto,
+    { id: userId }: IAuthUser,
+  ): Promise<GetPresignPutObjectResponseDto> {
     try {
-      const storageKey = 'company-files';
+      const storageKey = `${userId}/${Date.now()}_${fileName}`;
       const command = new PutObjectCommand({
         Bucket: this.configService.get('aws.bucket'),
         Key: storageKey,
