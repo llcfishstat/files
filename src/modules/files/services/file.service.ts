@@ -86,10 +86,20 @@ export class FilesService implements IFileService {
         Key: storageKey,
         ContentType: contentType,
       });
-      const url = await getSignedUrl(this.s3Client, command, {
-        expiresIn: Number(this.configService.get('aws.presignExpire')),
-      });
-      return { url, storageKey };
+      console.log('Bucket:', this.configService.get('aws.bucket'));
+      console.log('Storage Key:', storageKey);
+      console.log('Content Type:', contentType);
+
+      try {
+        const url = await getSignedUrl(this.s3Client, command, {
+          expiresIn: Number(this.configService.get('aws.presignExpire')),
+        });
+        console.log('Generated URL:', url);
+        return { url, storageKey };
+      } catch (e) {
+        console.error('Error generating presigned URL:', e);
+        throw e;
+      }
     } catch (e) {
       throw e;
     }
