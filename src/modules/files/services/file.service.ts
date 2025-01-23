@@ -60,6 +60,8 @@ export class FilesService implements IFileService {
         userId,
       },
     });
+    console.log('Bucket:', this.configService.get('aws.bucket'));
+    console.log('Bucket:', this.configService.get('aws.presignExpire'));
     try {
       const userResponse = await firstValueFrom(
         this.authClient
@@ -79,6 +81,7 @@ export class FilesService implements IFileService {
     { fileName, contentType }: GetPresignPutObjectDto,
     { id: userId }: IAuthUser,
   ): Promise<GetPresignPutObjectResponseDto> {
+    console.log(userId);
     try {
       const storageKey = `${userId}/${Date.now()}_${fileName}`;
       const command = new PutObjectCommand({
