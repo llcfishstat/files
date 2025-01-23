@@ -51,7 +51,6 @@ export class FilesService implements IFileService {
     data: CreateFileDto,
   ): Promise<FileResponseDto> {
     const { fileName, fileType, storageKey } = data;
-
     const file = await this.prismaService.files.create({
       data: {
         fileName,
@@ -60,28 +59,17 @@ export class FilesService implements IFileService {
         userId,
       },
     });
-    console.log('Bucket:', this.configService.get('aws.bucket'));
-    console.log('Bucket:', this.configService.get('aws.presignExpire'));
-    try {
-      const userResponse = await firstValueFrom(
-        this.authClient
-          .send('getUserById', JSON.stringify({ userId }))
-          .pipe(timeout(5000), retry(3)),
-      );
-      const user = plainToInstance(UserResponseDto, userResponse);
-      return { ...file, author: user };
-    } catch (error) {
-      throw new Error(
-        `Failed to retrieve user with ID ${userId}: ${error.message}`,
-      );
-    }
+    const userResponse = await firstValueFrom(
+      this.authClient.send('getUserById', JSON.stringify({ userId })),
+    );
+    const user = plainToInstance(UserResponseDto, userResponse);
+    return { ...file, author: user };
   }
 
   async getPresignPutObject(
     { fileName, contentType }: GetPresignPutObjectDto,
     { id: userId }: IAuthUser,
   ): Promise<GetPresignPutObjectResponseDto> {
-    console.log(userId);
     try {
       const storageKey = `${userId}/${Date.now()}_${fileName}`;
       const command = new PutObjectCommand({
@@ -89,22 +77,11 @@ export class FilesService implements IFileService {
         Key: storageKey,
         ContentType: contentType,
       });
-      console.log('Bucket:', this.configService.get('aws.bucket'));
-      console.log('Storage Key:', storageKey);
-      console.log('Content Type:', contentType);
-
-      try {
-        const url = await getSignedUrl(this.s3Client, command, {
-          expiresIn: Number(this.configService.get('aws.presignExpire')),
-        });
-        console.log('Generated URL:', url);
-        return { url, storageKey };
-      } catch (e) {
-        console.error('Error generating presigned URL:', e);
-        throw e;
-      }
+      const url = await getSignedUrl(this.s3Client, command, {
+        expiresIn: Number(this.configService.get('aws.presignExpire')),
+      });
+      return { url, storageKey };
     } catch (e) {
-      console.error('Error generating presigned URL:', e.message, e.stack);
       throw e;
     }
   }
