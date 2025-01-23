@@ -101,6 +101,7 @@ export class FilesService implements IFileService {
         throw e;
       }
     } catch (e) {
+      console.error('Error generating presigned URL:', e.message, e.stack);
       throw e;
     }
   }
