@@ -12,7 +12,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { ConfigService } from '@nestjs/config';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, retry } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 import { plainToInstance } from 'class-transformer';
 
@@ -34,9 +34,7 @@ export class FilesService implements IFileService {
     private readonly configService: ConfigService,
     private readonly prismaService: PrismaService,
   ) {
-    this.authClient.connect().catch((error) => {
-      console.error('Error connecting to authClient:', error);
-    });
+    this.authClient.connect();
     this.s3Client = new S3Client({
       region: this.configService.get('aws.region'),
       endpoint: this.configService.get('aws.endpoint'),
@@ -62,7 +60,9 @@ export class FilesService implements IFileService {
       },
     });
     const userResponse = await firstValueFrom(
-      this.authClient.send('getUserById', JSON.stringify({ userId })),
+      this.authClient
+        .send('getUserById', JSON.stringify({ userId }))
+        .pipe(retry(3)),
     );
     const user = plainToInstance(UserResponseDto, userResponse);
     return { ...file, author: user };
