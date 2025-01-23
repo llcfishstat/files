@@ -73,7 +73,7 @@ export class FilesService implements IFileService {
     { id: userId }: IAuthUser,
   ): Promise<GetPresignPutObjectResponseDto> {
     try {
-      const storageKey = `${userId}/${Date.now()}_${fileName}`;
+      const storageKey = `${userId}/${fileName}`;
       const command = new PutObjectCommand({
         Bucket: this.configService.get('aws.bucket'),
         Key: storageKey,
