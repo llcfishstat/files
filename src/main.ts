@@ -67,7 +67,7 @@ async function bootstrap() {
     options: {
       urls: [`${configService.get('rmq.uri')}`],
       queue: `${configService.get('rmq.files')}`,
-      queueOptions: { durable: false },
+      queueOptions: { durable: true },
       prefetchCount: 1,
     },
   });
