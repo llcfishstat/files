@@ -21,7 +21,6 @@ import { FilesController } from './controllers/files.controller';
             queue: `${configService.get('rmq.auth')}`,
             queueOptions: {
               durable: true,
-              autoDelete: false,
             },
           },
         }),
