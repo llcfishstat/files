@@ -70,6 +70,7 @@ export class FilesService implements IFileService {
     { fileName, contentType }: GetPresignPutObjectDto,
     { id: userId }: IAuthUser,
   ): Promise<GetPresignPutObjectResponseDto> {
+    console.log(userId);
     try {
       const storageKey = `${userId}/${fileName}`;
       const command = new PutObjectCommand({
