@@ -12,7 +12,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { ConfigService } from '@nestjs/config';
-import { firstValueFrom, retry } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 import { plainToInstance } from 'class-transformer';
 
@@ -60,9 +60,7 @@ export class FilesService implements IFileService {
       },
     });
     const userResponse = await firstValueFrom(
-      this.authClient
-        .send('getUserById', JSON.stringify({ userId }))
-        .pipe(retry(3)),
+      this.authClient.send('getUserById', JSON.stringify({ userId })),
     );
     const user = plainToInstance(UserResponseDto, userResponse);
     return { ...file, author: user };
@@ -72,6 +70,7 @@ export class FilesService implements IFileService {
     { fileName, contentType }: GetPresignPutObjectDto,
     { id: userId }: IAuthUser,
   ): Promise<GetPresignPutObjectResponseDto> {
+    console.log(userId);
     try {
       const storageKey = `${userId}/${fileName}`;
       const command = new PutObjectCommand({
