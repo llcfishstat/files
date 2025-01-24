@@ -32,6 +32,8 @@ export class FilesController {
     @AuthUser() user: IAuthUser,
     @Body() data: CreateFileDto,
   ): Promise<FileResponseDto> {
+    console.log(`user controller:${user}`);
+    console.log(`data controller:${data}`);
     return this.fileService.createFile(user.id, data);
   }
 

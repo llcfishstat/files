@@ -50,6 +50,8 @@ export class FilesService implements IFileService {
     userId: string,
     data: CreateFileDto,
   ): Promise<FileResponseDto> {
+    console.log(`user service:${userId}`);
+    console.log(`data service:${data}`);
     const { fileName, fileType, storageKey } = data;
     const file = await this.prismaService.files.create({
       data: {
@@ -59,6 +61,11 @@ export class FilesService implements IFileService {
         userId,
       },
     });
+    const payload = { check: 'hello from files service' };
+    const result = await firstValueFrom(
+      this.authClient.send('testConnection', payload),
+    );
+    console.log(result);
     const userResponse = await firstValueFrom(
       this.authClient.send('getUserById', JSON.stringify({ userId })),
     );
