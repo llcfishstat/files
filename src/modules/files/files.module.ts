@@ -20,8 +20,7 @@ import { FilesController } from './controllers/files.controller';
             urls: [`${configService.get('rmq.uri')}`],
             queue: `${configService.get('rmq.auth')}`,
             queueOptions: {
-              durable: true,
-              autoDelete: false,
+              durable: false,
             },
           },
         }),
